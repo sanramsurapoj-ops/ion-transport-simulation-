@@ -1,0 +1,215 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>From Thermodynamics to Ion Transport | Interactive Lab</title>
+<style>
+:root{--ink:#182536;--muted:#5c6b7c;--line:#dce4ec;--paper:#f4f7fb;--card:#fff;--blue:#2463eb;--cyan:#0f9eaa;--orange:#e58a25;--green:#16845b;--red:#c74440}
+*{box-sizing:border-box}
+body{margin:0;background:var(--paper);color:var(--ink);font-family:system-ui,-apple-system,"Segoe UI",Tahoma,sans-serif;line-height:1.55}
+header{background:linear-gradient(125deg,#142b49,#1d5272);color:#fff;padding:28px 18px 24px}
+.wrap{max-width:1050px;margin:auto}
+.eyebrow{text-transform:uppercase;letter-spacing:.12em;font-size:.75rem;font-weight:800;opacity:.8}
+h1{font-size:clamp(1.5rem,4vw,2.25rem);line-height:1.18;margin:8px 0}
+header p{max-width:760px;margin:10px 0 0;color:#e2edf6}
+nav{display:flex;gap:8px;flex-wrap:wrap;margin:18px 0 0}
+nav button{border:1px solid #ffffff65;background:#ffffff12;color:white;padding:10px 13px;border-radius:10px;font-weight:700;cursor:pointer}
+nav button.active{background:white;color:#183550;border-color:white}
+main{max-width:1050px;margin:22px auto;padding:0 14px 38px}
+.panel{display:none}.panel.active{display:block}
+.intro{color:var(--muted);margin:0 0 16px}
+.layout{display:grid;grid-template-columns:minmax(0,1.05fr) minmax(0,.95fr);gap:16px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:18px;box-shadow:0 5px 18px #1b35500a;min-width:0}
+.card h2{font-size:1.08rem;margin:0 0 14px}
+.equation{background:#eef5ff;border:1px solid #d6e6ff;border-radius:12px;padding:14px;text-align:center;font-size:clamp(1rem,2.8vw,1.3rem);font-weight:750;margin:12px 0}
+.eqsub{font-size:.82rem;font-weight:500;color:var(--muted);margin-top:4px}
+.control{margin:17px 0}
+.control-top{display:flex;justify-content:space-between;gap:12px;align-items:baseline;margin-bottom:7px}
+.control label{font-weight:650}
+.value{font-variant-numeric:tabular-nums;color:var(--blue);font-weight:800;white-space:nowrap}
+input[type=range]{width:100%;accent-color:var(--blue);cursor:pointer}
+select{width:100%;padding:10px;border:1px solid var(--line);border-radius:9px;background:white;font:inherit}
+.outputs{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
+.metric{background:#f6f8fb;border:1px solid var(--line);border-radius:12px;padding:12px}
+.metric .label{font-size:.82rem;color:var(--muted)}
+.metric .num{font-size:1.35rem;font-weight:850;font-variant-numeric:tabular-nums;overflow-wrap:anywhere}
+.metric .unit{font-size:.8rem;color:var(--muted)}
+.status{margin-top:12px;border-radius:12px;background:#edf8f3;border:1px solid #cbe9db;padding:12px;font-weight:650}
+.status.warn{background:#fff6e8;border-color:#f5dfb8}
+.status.neutral{background:#f0f4f8;border-color:#dce4ec}
+.visual{height:170px;display:flex;align-items:center;justify-content:center;background:linear-gradient(180deg,#f9fbff,#eef4f9);border:1px solid var(--line);border-radius:12px;margin:12px 0;position:relative;overflow:hidden}
+.membrane{position:absolute;left:0;right:0;top:48%;height:15px;background:repeating-linear-gradient(90deg,#7ca6c9 0 9px,#d4e5f4 9px 18px);opacity:.75}
+.side-label{position:absolute;top:10px;font-size:.8rem;color:var(--muted);font-weight:700}
+.side-label.left{left:12px}.side-label.right{right:12px}
+.ion{width:36px;height:36px;border-radius:50%;background:#2463eb;color:#fff;display:flex;align-items:center;justify-content:center;font-size:.85rem;font-weight:850;position:absolute;box-shadow:0 3px 9px #2463eb44;transition:left .25s,top .25s}
+.arrow{position:absolute;font-size:1.6rem;font-weight:900;color:var(--orange)}
+.note{font-size:.88rem;color:var(--muted)}
+button.action{background:var(--blue);color:white;border:0;border-radius:9px;padding:9px 13px;font:inherit;font-weight:750;cursor:pointer}
+button.secondary{background:white;color:var(--ink);border:1px solid var(--line)}
+.actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:12px}
+.questions{margin-top:16px;background:#fff;border-left:4px solid var(--cyan);padding:13px 15px;border-radius:0 10px 10px 0}
+.questions strong{display:block;margin-bottom:4px}
+footer{text-align:center;padding:16px;color:var(--muted);font-size:.82rem}
+@media(max-width:720px){.layout{grid-template-columns:1fr}.card{padding:15px}header{padding:23px 16px}.outputs{grid-template-columns:repeat(2,minmax(0,1fr))}nav button{flex:1 1 44%;font-size:.9rem}}
+</style>
+</head>
+<body>
+<header><div class="wrap">
+<div class="eyebrow">Interactive teaching lab · Physical chemistry / biophysics</div>
+<h1>From Thermodynamics to Ion Transport</h1>
+<p>สำรวจความเชื่อมโยงระหว่างแรงขับทางอุณหพลศาสตร์ การขนส่งผ่านเยื่อหุ้ม และกระแสไอออน โดยปรับตัวแปรแล้วสังเกตผลได้ทันที</p>
+<nav aria-label="เลือกบททดลอง">
+<button class="active" data-tab="p1">1 · Electrochemical Potential</button>
+<button data-tab="p2">2 · Direction of Δμ</button>
+<button data-tab="p3">3 · Thermodynamics → Kinetics</button>
+<button data-tab="p4">4 · Follow the Ion</button>
+</nav>
+</div></header>
+<main>
+<section class="panel active" id="p1">
+<p class="intro">บททดลอง 1 — แยกองค์ประกอบทางเคมีและทางไฟฟ้าของ electrochemical potential difference</p>
+<div class="layout">
+<div class="card"><h2>ปรับเงื่อนไขของไอออน</h2>
+<div class="equation">Δμ<sub>i</sub> = RT ln(a<sub>in</sub>/a<sub>out</sub>) + z<sub>i</sub>FΔψ<div class="eqsub">กำหนด Δμ = μ<sub>in</sub> − μ<sub>out</sub> และ Δψ = ψ<sub>in</sub> − ψ<sub>out</sub></div></div>
+<div class="control"><div class="control-top"><label for="aIn">Activity ภายใน (aᵢₙ)</label><span class="value" id="aInV">10</span></div><input id="aIn" type="range" min="0.1" max="100" value="10" step=".1"></div>
+<div class="control"><div class="control-top"><label for="aOut">Activity ภายนอก (aₒᵤₜ)</label><span class="value" id="aOutV">1</span></div><input id="aOut" type="range" min="0.1" max="100" value="1" step=".1"></div>
+<div class="control"><div class="control-top"><label for="z1">ประจุไอออน (z)</label></div><select id="z1"><option value="1">+1 เช่น Na⁺, K⁺</option><option value="2">+2 เช่น Ca²⁺</option><option value="-1">−1 เช่น Cl⁻</option><option value="-2">−2 เช่น SO₄²⁻</option></select></div>
+<div class="control"><div class="control-top"><label for="psi1">Δψ = ψᵢₙ − ψₒᵤₜ</label><span class="value" id="psi1V">−60 mV</span></div><input id="psi1" type="range" min="-150" max="150" value="-60" step="1"></div>
+<div class="control"><div class="control-top"><label for="temp1">อุณหภูมิ</label><span class="value" id="temp1V">298 K</span></div><input id="temp1" type="range" min="273" max="323" value="298" step="1"></div>
+<div class="actions"><button class="action secondary" id="reset1">คืนค่าเริ่มต้น</button><button class="action" id="preset1">ตัวอย่าง Na⁺ ในเซลล์</button></div>
+</div>
+<div class="card"><h2>ผลลัพธ์</h2><div class="outputs">
+<div class="metric"><div class="label">Chemical term</div><div class="num" id="chem1">—</div><div class="unit">kJ mol⁻¹</div></div>
+<div class="metric"><div class="label">Electrical term</div><div class="num" id="elec1">—</div><div class="unit">kJ mol⁻¹</div></div>
+<div class="metric"><div class="label">Total Δμ</div><div class="num" id="total1">—</div><div class="unit">kJ mol⁻¹</div></div>
+<div class="metric"><div class="label">Thermodynamic balance</div><div class="num" id="balance1">—</div><div class="unit">จากเครื่องหมายของ Δμ</div></div></div>
+<div class="visual"><span class="side-label left">Inside</span><span class="side-label right">Outside</span><div class="membrane"></div><div class="ion" id="ion1">Na⁺</div><span class="arrow" id="arrow1">⇢</span></div>
+<div class="status" id="status1">—</div><p class="note">สำหรับแบบจำลองนี้ ใช้ activity เป็นค่าบวกไร้มิติ และใช้ F = 96.485 kJ V⁻¹ mol⁻¹, R = 0.008314 kJ mol⁻¹ K⁻¹</p></div>
+</div>
+<div class="questions"><strong>ลองคิด</strong>ถ้าเพิ่มความเข้มข้นภายใน แต่คงศักย์ไฟฟ้าไว้เดิม Δμ เปลี่ยนอย่างไร? เมื่อใดที่ chemical term และ electrical term หักล้างกันพอดี?</div>
+</section>
+
+<section class="panel" id="p2">
+<p class="intro">บททดลอง 2 — ใช้เครื่องหมายของ Δμ เพื่อบอกทิศทางที่เอื้อต่อทางอุณหพลศาสตร์ โดยไม่สับสนกับอัตราการขนส่ง</p>
+<div class="layout">
+<div class="card"><h2>ปรับแรงขับ</h2><div class="equation">Δμ = μ<sub>in</sub> − μ<sub>out</sub><div class="eqsub">ทิศทางที่เอื้อขึ้นกับนิยามเครื่องหมายนี้</div></div>
+<div class="control"><div class="control-top"><label for="dmu2">Δμ โดยรวม</label><span class="value" id="dmu2V">−5.0 kJ mol⁻¹</span></div><input id="dmu2" type="range" min="-15" max="15" value="-5" step=".1"></div>
+<div class="control"><div class="control-top"><label for="z2">ชนิดประจุ (ใช้แสดงภาพ)</label></div><select id="z2"><option value="1">Cation (+)</option><option value="-1">Anion (−)</option></select></div>
+<div class="control"><div class="control-top"><label for="mob2">ความสามารถในการผ่านช่องทาง (ภาพประกอบ)</label><span class="value" id="mob2V">กลาง</span></div><input id="mob2" type="range" min="0" max="100" value="50" step="1"></div>
+<div class="actions"><button class="action secondary" id="reset2">คืนค่าเริ่มต้น</button></div></div>
+<div class="card"><h2>ตีความผล</h2><div class="outputs">
+<div class="metric"><div class="label">Δμ</div><div class="num" id="dmu2out">−5.0</div><div class="unit">kJ mol⁻¹</div></div>
+<div class="metric"><div class="label">ทิศทางที่เอื้อ</div><div class="num" id="dir2">เข้าเซลล์</div><div class="unit">thermodynamic tendency</div></div>
+</div>
+<div class="visual"><span class="side-label left">Inside</span><span class="side-label right">Outside</span><div class="membrane"></div><div class="ion" id="ion2">+</div><span class="arrow" id="arrow2">←</span></div>
+<div class="status" id="status2">—</div><p class="note">ถ้า Δμ = 0 ระบบอยู่ที่สมดุลทางอุณหพลศาสตร์สำหรับไอออนชนิดนั้น แต่ไม่ได้แปลว่าโมเลกุลหยุดเคลื่อนที่ระดับจุลภาค</p>
+</div></div>
+<div class="questions"><strong>ลองคิด</strong>แรงขับมีขนาดมากขึ้น แปลว่าไอออนต้องเคลื่อนที่เร็วขึ้นเสมอหรือไม่? ต้องรู้อะไรเพิ่มเกี่ยวกับช่องทางหรือระบบขนส่ง?</div>
+</section>
+
+<section class="panel" id="p3">
+<p class="intro">บททดลอง 3 — แรงขับทางอุณหพลศาสตร์บอกแนวโน้ม ส่วน kinetics/transport properties กำหนดว่า flux มากน้อยเพียงใด</p>
+<div class="layout">
+<div class="card"><h2>ปรับแรงขับและการขนส่ง</h2>
+<div class="equation">J = −L Δμ<div class="eqsub">แบบจำลองเชิงเส้นอย่างง่าย ใกล้สมดุล</div></div>
+<div class="control"><div class="control-top"><label for="dmu3">Δμ</label><span class="value" id="dmu3V">−5.0 kJ mol⁻¹</span></div><input id="dmu3" type="range" min="-10" max="10" value="-5" step=".1"></div>
+<div class="control"><div class="control-top"><label for="L3">สัมประสิทธิ์การขนส่ง L</label><span class="value" id="L3V">1.0</span></div><input id="L3" type="range" min="0" max="3" value="1" step=".1"></div>
+<div class="control"><div class="control-top"><label for="z3">ประจุไอออน z</label></div><select id="z3"><option value="1">+1</option><option value="2">+2</option><option value="-1">−1</option><option value="-2">−2</option></select></div>
+<div class="control"><div class="control-top"><label for="area3">พื้นที่เยื่อหุ้ม A</label><span class="value" id="area3V">1.0</span></div><input id="area3" type="range" min=".1" max="5" value="1" step=".1"></div>
+<div class="actions"><button class="action secondary" id="reset3">คืนค่าเริ่มต้น</button></div></div>
+<div class="card"><h2>จาก thermodynamics ไปสู่ flux และ current</h2><div class="outputs">
+<div class="metric"><div class="label">Flux J = −LΔμ</div><div class="num" id="J3">5.0</div><div class="unit">หน่วยตาม L ที่สมมติ</div></div>
+<div class="metric"><div class="label">Current density j = zFJ</div><div class="num" id="j3">482.4</div><div class="unit">สเกลตามหน่วยแบบจำลอง</div></div>
+<div class="metric"><div class="label">Total current I = jA</div><div class="num" id="I3">482.4</div><div class="unit">สเกลตามหน่วยแบบจำลอง</div></div>
+<div class="metric"><div class="label">แรงขับเป็นศูนย์?</div><div class="num" id="eq3">ไม่ใช่</div><div class="unit">ดู Δμ</div></div></div>
+<div class="status" id="status3">—</div><p class="note">นี่เป็นโมเดลเพื่อสอนความสัมพันธ์เชิงแนวคิด ไม่ใช่การทำนายค่ากระแสจริง: หน่วยของ L ต้องสอดคล้องกับนิยามของ flux และ Δμ จึงจะได้หน่วย SI ที่สมบูรณ์</p></div>
+</div>
+<div class="questions"><strong>ลองคิด</strong>ถ้า Δμ เท่าเดิม แต่ L เพิ่มเป็นสองเท่า จะเกิดอะไรกับ flux? แล้วถ้าเพิ่มพื้นที่เยื่อหุ้ม จะกระทบ flux ต่อพื้นที่หรือกระแสรวม?</div>
+</section>
+
+<section class="panel" id="p4">
+<p class="intro">บททดลอง 4 — เชื่อมแรงขับไฟฟ้ากับกระแสผ่านช่องไอออนด้วยสมการแบบ ohmic อย่างง่าย</p>
+<div class="layout">
+<div class="card"><h2>ปรับแรงดันและ conductance</h2>
+<div class="equation">I = g (V<sub>m</sub> − E<sub>i</sub>)<div class="eqsub">Driving force = Vₘ − Eᵢ</div></div>
+<div class="control"><div class="control-top"><label for="vm4">Membrane potential Vₘ</label><span class="value" id="vm4V">−60 mV</span></div><input id="vm4" type="range" min="-150" max="100" value="-60" step="1"></div>
+<div class="control"><div class="control-top"><label for="ei4">Equilibrium potential Eᵢ</label><span class="value" id="ei4V">+60 mV</span></div><input id="ei4" type="range" min="-120" max="100" value="60" step="1"></div>
+<div class="control"><div class="control-top"><label for="g4">Conductance g</label><span class="value" id="g4V">1.0 nS</span></div><input id="g4" type="range" min="0" max="5" value="1" step=".1"></div>
+<div class="control"><div class="control-top"><label for="ionType4">ชนิดไอออน</label></div><select id="ionType4"><option value="Na⁺">Na⁺ (cation)</option><option value="K⁺">K⁺ (cation)</option><option value="Cl⁻">Cl⁻ (anion)</option><option value="Ca²⁺">Ca²⁺ (cation)</option></select></div>
+<div class="actions"><button class="action secondary" id="reset4">คืนค่าเริ่มต้น</button><button class="action" id="eqPreset4">ตั้ง Vₘ = Eᵢ</button></div></div>
+<div class="card"><h2>อ่านกระแสและทิศทาง</h2><div class="outputs">
+<div class="metric"><div class="label">Driving force</div><div class="num" id="drive4">−120</div><div class="unit">mV</div></div>
+<div class="metric"><div class="label">Current I</div><div class="num" id="current4">−120</div><div class="unit">pA (เมื่อ g เป็น nS)</div></div>
+<div class="metric"><div class="label">Conventional current</div><div class="num" id="conv4">ลบ</div><div class="unit">ตาม sign convention</div></div>
+<div class="metric"><div class="label">Net current</div><div class="num" id="net4">ไม่เป็นศูนย์</div><div class="unit">เมื่อ Vₘ ≠ Eᵢ</div></div></div>
+<div class="visual"><span class="side-label left">Inside</span><span class="side-label right">Outside</span><div class="membrane"></div><div class="ion" id="ion4">Na⁺</div><span class="arrow" id="arrow4">←</span></div>
+<div class="status" id="status4">—</div><p class="note">ใช้ sign convention กระแสแบบมาตรฐาน: กระแสเป็นบวกหมายถึง conventional current ไหลออกจากเซลล์ในแบบจำลองนี้ สำหรับ cation กระแสบวกสัมพันธ์กับการเคลื่อนที่ออก; สำหรับ anion ทิศการเคลื่อนที่ของไอออนจะตรงข้ามกับ conventional current</p></div>
+</div>
+<div class="questions"><strong>ลองคิด</strong>เมื่อ Vₘ = Eᵢ ทำไมกระแสสุทธิของไอออนนั้นจึงเป็นศูนย์ในแบบจำลองนี้? ถ้าเพิ่ม g แต่แรงขับเป็นศูนย์ กระแสเปลี่ยนหรือไม่?</div>
+</section>
+</main>
+<footer>Interactive teaching model · ปรับค่าเพื่อสำรวจแนวคิด ไม่ใช่เครื่องมือสำหรับคำนวณค่าทดลองจริงโดยตรง</footer>
+<script>
+const $=id=>document.getElementById(id);
+const fmt=(x,n=2)=>Number(x).toLocaleString('en-US',{minimumFractionDigits:n,maximumFractionDigits:n});
+function setText(id,text){$(id).textContent=text}
+document.querySelectorAll('nav button').forEach(b=>b.addEventListener('click',()=>{
+ document.querySelectorAll('nav button').forEach(x=>x.classList.toggle('active',x===b));
+ document.querySelectorAll('.panel').forEach(x=>x.classList.toggle('active',x.id===b.dataset.tab));
+}));
+function update1(){
+ const ai=+$('aIn').value, ao=+$('aOut').value,z=+$('z1').value,psi=+$('psi1').value/1000,T=+$('temp1').value;
+ const chem=.008314*T*Math.log(ai/ao),elec=z*96.485*psi,total=chem+elec;
+ setText('aInV',fmt(ai,1));setText('aOutV',fmt(ao,1));setText('psi1V',`${$('psi1').value} mV`);setText('temp1V',`${T} K`);
+ setText('chem1',fmt(chem,3));setText('elec1',fmt(elec,3));setText('total1',fmt(total,3));
+ setText('balance1',Math.abs(total)<.05?'ใกล้สมดุล':total<0?'Δμ < 0':'Δμ > 0');
+ const inside=$('aIn').value, outside=$('aOut').value;
+ setText('ion1',z>0?(z===2?'Ca²⁺':'Na⁺'):(z===-2?'SO₄²⁻':'Cl⁻'));
+ $('ion1').style.left=total<0?'28%':total>0?'68%':'48%';$('ion1').style.top='calc(48% - 25px)';
+ $('arrow1').textContent=total<-.05?'←':total>.05?'→':'↔';$('arrow1').style.left=total<-.05?'40%':total>.05?'55%':'47%';$('arrow1').style.top='35%';
+ const s=total<-.05?'เมื่อ Δμ = μin − μout < 0 การเคลื่อนจากภายนอกเข้าในทำให้พลังงานศักย์เคมีไฟฟ้าลดลง จึงเป็นทิศทางที่เอื้อ':total>.05?'เมื่อ Δμ > 0 การเคลื่อนจากภายในออกภายนอกทำให้พลังงานศักย์เคมีไฟฟ้าลดลง':'Δμ ใกล้ศูนย์: ไม่มีแรงขับสุทธิทางอุณหพลศาสตร์สำหรับไอออนนี้';
+ setText('status1',s);$('status1').className='status '+(Math.abs(total)<.05?'neutral':'');
+}
+['aIn','aOut','z1','psi1','temp1'].forEach(id=>$(id).addEventListener('input',update1));
+$('reset1').onclick=()=>{ $('aIn').value=10;$('aOut').value=1;$('z1').value='1';$('psi1').value=-60;$('temp1').value=298;update1();};
+$('preset1').onclick=()=>{$('aIn').value=10;$('aOut').value=140;$('z1').value='1';$('psi1').value=-60;$('temp1').value=310;update1();};
+function update2(){
+ const d=+$('dmu2').value,m=+$('mob2').value,z=+$('z2').value;
+ setText('dmu2V',`${fmt(d,1)} kJ mol⁻¹`);setText('dmu2out',fmt(d,1));setText('mob2V',m<34?'ต่ำ':m<67?'กลาง':'สูง');
+ const dir=Math.abs(d)<.05?'ไม่มีทิศทางสุทธิ':d<0?'เข้าเซลล์':'ออกจากเซลล์';setText('dir2',dir);
+ $('ion2').textContent=z>0?'+':'−';$('ion2').style.left=d<-.05?'28%':d>.05?'68%':'48%';$('ion2').style.top='calc(48% - 25px)';
+ $('arrow2').textContent=d<-.05?'←':d>.05?'→':'↔';$('arrow2').style.left=d<-.05?'40%':d>.05?'55%':'47%';$('arrow2').style.top='35%';
+ setText('status2',Math.abs(d)<.05?'Δμ ≈ 0: ไม่มีแรงขับสุทธิ แม้ยังอาจมีการเคลื่อนที่ระดับโมเลกุลไปทั้งสองทิศทาง':`${dir} เป็นทิศทางที่เอื้อทางอุณหพลศาสตร์ แต่ปริมาณการขนส่งจริงยังขึ้นกับ permeability/kinetics (ระดับที่เลือก: ${m}%)`);
+ $('status2').className='status '+(Math.abs(d)<.05?'neutral':'');
+}
+['dmu2','mob2','z2'].forEach(id=>$(id).addEventListener('input',update2));
+$('reset2').onclick=()=>{$('dmu2').value=-5;$('mob2').value=50;$('z2').value='1';update2();};
+function update3(){
+ const d=+$('dmu3').value,L=+$('L3').value,z=+$('z3').value,A=+$('area3').value;
+ const J=-L*d,j=z*96.485*J,I=j*A;
+ setText('dmu3V',`${fmt(d,1)} kJ mol⁻¹`);setText('L3V',fmt(L,1));setText('area3V',fmt(A,1));
+ setText('J3',fmt(J,3));setText('j3',fmt(j,2));setText('I3',fmt(I,2));setText('eq3',Math.abs(d)<.05?'ใช่':'ไม่ใช่');
+ setText('status3',Math.abs(d)<.05?'Δμ = 0 ทำให้ J = 0 ในสมการเชิงเส้นนี้ แม้ L และพื้นที่จะมีค่าเป็นบวก':'เมื่อคง Δμ ไว้ การเพิ่ม L จะเพิ่มขนาดของ J; การเพิ่มพื้นที่ A เพิ่มกระแสรวม I แต่ไม่เปลี่ยน flux ต่อพื้นที่ในโมเดลนี้');
+ $('status3').className='status '+(Math.abs(d)<.05?'neutral':'');
+}
+['dmu3','L3','z3','area3'].forEach(id=>$(id).addEventListener('input',update3));
+$('reset3').onclick=()=>{$('dmu3').value=-5;$('L3').value=1;$('z3').value='1';$('area3').value=1;update3();};
+function update4(){
+ const vm=+$('vm4').value,ei=+$('ei4').value,g=+$('g4').value,ion=$('ionType4').value;
+ const drive=vm-ei,I=g*drive;
+ setText('vm4V',`${vm} mV`);setText('ei4V',`${ei>0?'+':''}${ei} mV`);setText('g4V',`${fmt(g,1)} nS`);
+ setText('drive4',fmt(drive,0));setText('current4',fmt(I,1));setText('conv4',Math.abs(I)<.05?'ศูนย์':I>0?'บวก (ออก)':'ลบ (เข้า)');setText('net4',Math.abs(I)<.05?'เป็นศูนย์':'ไม่เป็นศูนย์');
+ setText('ion4',ion);
+ $('ion4').style.left=I<-.05?'28%':I>.05?'68%':'48%';$('ion4').style.top='calc(48% - 25px)';
+ $('arrow4').textContent=I<-.05?'←':I>.05?'→':'↔';$('arrow4').style.left=I<-.05?'40%':I>.05?'55%':'47%';$('arrow4').style.top='35%';
+ const movement=Math.abs(I)<.05?'ไม่มี net current เพราะ Vₘ = Eᵢ หรือ g = 0':I>0?(ion==='Cl⁻'?'กระแส conventional เป็นบวก (ออก) แต่ anion เคลื่อนที่ทิศตรงข้าม':'กระแส conventional เป็นบวก และ cation เคลื่อนที่ออกในแบบจำลองนี้'):(ion==='Cl⁻'?'กระแส conventional เป็นลบ (เข้า) แต่ anion เคลื่อนที่ทิศตรงข้าม':'กระแส conventional เป็นลบ และ cation เคลื่อนที่เข้าในแบบจำลองนี้');
+ setText('status4',movement);$('status4').className='status '+(Math.abs(I)<.05?'neutral':'');
+}
+['vm4','ei4','g4','ionType4'].forEach(id=>$(id).addEventListener('input',update4));
+$('reset4').onclick=()=>{$('vm4').value=-60;$('ei4').value=60;$('g4').value=1;$('ionType4').value='Na⁺';update4();};
+$('eqPreset4').onclick=()=>{$('ei4').value=$('vm4').value;update4();};
+update1();update2();update3();update4();
+</script>
+</body>
+</html>
